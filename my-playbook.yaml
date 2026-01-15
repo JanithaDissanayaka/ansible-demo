@@ -5,8 +5,8 @@
    - name: install nginx server
      yum:
       name: nginx
-      state: latest
+      state: latest #we can stop this service using latest-> absent and started->stopped
    - name: starts nginx server
      service: 
       name: nginx
-      state: started
+      state: started 
