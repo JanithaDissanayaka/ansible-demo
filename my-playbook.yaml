@@ -1,2 +1,5 @@
 ---
  - name: create nginx web server
+   hosts: aws #also can add ip address of server
+   tasks: 
+   - name: install nginx server
