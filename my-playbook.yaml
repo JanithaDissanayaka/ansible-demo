@@ -3,3 +3,10 @@
    hosts: aws #also can add ip address of server
    tasks: 
    - name: install nginx server
+     yum:
+      name: nginx
+      state: latest
+   - name: starts nginx server
+     service: 
+      name: nginx
+      state: started
