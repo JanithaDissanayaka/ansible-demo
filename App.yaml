@@ -1,6 +1,7 @@
 ---
 - name: install node and npm
-  hosts: 13.234.37.93
+  vars_files: project-vars
+  hosts: "{{host_ip}}"
   tasks:
     - name: update repo and cache
       ansible.builtin.dnf:
@@ -8,25 +9,46 @@
           - nodejs
           - npm
 
-- name: create new linux user          
+- name: create new linux user for node app
+  vars_files: project-vars
+  hosts: "{{host_ip}}"
+  tasks:
+    - name: Create a user 'janitha' with a home directory
+      ansible.builtin.user:
+        name: janitha
+        create_home: yes
+      register: user_creation
+    - debug: msg={{user_creation}}
+
+
 
 - name: Deploy nodejs app
-  hosts: 13.234.37.93
+  vars_files: project-vars
+  hosts: "{{host_ip}}"
+  become: true
+  become_user: janitha
   tasks:
     - name: unpack tar file
       unarchive: 
-        src: /mnt/c/Users/Janitha/Desktop/Projects/deploy website using ansible/project-19/New folder/output.tar
-        dest: /root/
+        src: "{{file_location}}"
+        dest: "{{destination}}" #/home/janitha
+
+    - name: install dependencies
+      community.general.npm:
+         path: "{{destination}}/app"
+
+        
     - name: Build Next.js app
       command: npm run build
       args:
-        chdir: /root/app
+        chdir: "{{destination}}/app"
     - name: Start Next.js app in background
       ansible.builtin.command: npm start -- --hostname 0.0.0.0 --port 3000
       args:
-        chdir: /root/app
+        chdir: "{{destination}}/app"
       async: 60
       poll: 0
+
     - name: ensure app is runing
       shell: ps aux | grep node
       register: app_status
