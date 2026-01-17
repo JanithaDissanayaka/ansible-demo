@@ -1,12 +1,12 @@
 ---
- - name: configure nginx web server
-   hosts: aws #also can add ip address of server 
-   tasks:      
+ - name: create nginx web server
+   hosts: aws #also can add ip address of server
+   tasks: 
    - name: install nginx server
      yum:
       name: nginx
-      state: absent
-   - name: start nginx server
-     service:
+      state: latest #we can stop this service using latest-> absent and started->stopped
+   - name: starts nginx server
+     service: 
       name: nginx
-      state: stopped
+      state: started
